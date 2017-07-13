@@ -159,7 +159,7 @@ app.route('/posts')
             });
         }
         else
-            res.json({message:"請登入"});
+            res.status(200).json('請登入');
     });
 
 app.route('/posts/:id')
@@ -190,7 +190,28 @@ app.route('/posts/:id')
             });
         }
         else
-            res.json({message:"請登入"});
+            res.status(200).json('請登入');
+    })
+    
+    .patch(upload.array(), function(req, res, next){
+        var post_id = req.params.id;
+        if(req.cookies.login == 'ok'){
+            for(var i = 0; i < post.length; i++){
+                if(post_id == post[i].id){
+                    post[i].title = req.body.title;
+                    post[i].contene = req.body.content;
+                    post[i].updated_at = date.toIsoString();
+                    post[i].tags = req.body.tags;
+                    res.status(200).json(post[i]);
+                    fs.writeFile('Post.js', JSON.stringify(post, null, 4), 'utf-8', function(err){
+                        if(err)
+                            return console.error(error);
+                    });
+                }
+            }
+        }
+        else
+            res.status(200).json('請登入');
     });
 
     
